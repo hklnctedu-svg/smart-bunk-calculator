@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Smart Bunk Calculator - track college attendance, safe bunks and recovery classes." />
+  <meta name="theme-color" content="#0b1f4d" />
+  <title>Smart Bunk Calculator</title>
+
+  <!-- Google Font (falls back to system fonts if offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       ICON SPRITE
+       All icons are defined once here and reused with <use href="#id">
+       ============================================================ -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11"/><line x1="12" y1="11" x2="12" y2="11"/><line x1="16" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="12" y1="15" x2="12" y2="15"/><line x1="16" y1="15" x2="16" y2="18"/><line x1="8" y1="18" x2="12" y2="18"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="i-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></symbol>
+    <symbol id="i-user-x" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></symbol>
+    <symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+  </svg>
+
+  <div class="app">
+
+    <!-- ============================================================
+         SIDEBAR NAVIGATION (desktop) / slide-in drawer (mobile)
+         ============================================================ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-logo"><svg class="icon"><use href="#i-logo"/></svg></div>
+        <div>
+          <p class="brand-name">Smart Bunk</p>
+          <p class="brand-sub">Attendance Manager</p>
+        </div>
+      </div>
+
+      <p class="nav-heading">Menu</p>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-link active" data-view="dashboard">
+          <svg class="icon"><use href="#i-grid"/></svg> Dashboard
+        </button>
+        <button class="nav-link" data-view="calculator">
+          <svg class="icon"><use href="#i-calc"/></svg> Calculator
+        </button>
+        <button class="nav-link" data-view="subjects">
+          <svg class="icon"><use href="#i-book"/></svg> Subjects
+          <span class="nav-count" id="navSubjectCount">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="save-status" id="saveStatus">
+          <svg class="icon"><use href="#i-save"/></svg>
+          <span id="saveStatusText">Saved in this browser</span>
+        </div>
+        <button class="btn btn-ghost-light btn-block" id="sampleBtn">
+          <svg class="icon"><use href="#i-sparkles"/></svg> Load Sample Data
+        </button>
+        <button class="btn btn-ghost-danger btn-block" id="resetBtn">
+          <svg class="icon"><use href="#i-reset"/></svg> Reset All Data
+        </button>
+      </div>
+    </aside>
+
+    <!-- Dark overlay shown behind the sidebar on mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+    <main class="main">
+
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu">
+          <svg class="icon"><use href="#i-menu"/></svg>
+        </button>
+        <div class="topbar-title">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Your attendance at a glance</p>
+        </div>
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+          <svg class="icon"><use id="themeIcon" href="#i-moon"/></svg>
+        </button>
+      </header>
+
+      <!-- Shown only if the browser blocks LocalStorage (e.g. strict private mode) -->
+      <div class="alert alert-danger hidden" id="storageWarning">
+        <svg class="icon"><use href="#i-alert"/></svg>
+        <span>Your browser is blocking storage, so your data <strong>will not be saved</strong> after you close or refresh this page.</span>
+      </div>
+
+      <!-- ==================== DASHBOARD VIEW ==================== -->
+      <section class="view active" id="view-dashboard">
+
+        <!-- Hero: big radial gauge + headline + chips + progress bar -->
+        <div class="card hero" id="hero">
+          <div class="gauge gauge-lg" role="img" id="heroGauge" aria-label="Attendance gauge">
+            <svg viewBox="0 0 160 160">
+              <circle class="gauge-track" cx="80" cy="80" r="68" />
+              <circle class="gauge-fill" id="heroGaugeFill" cx="80" cy="80" r="68" />
+              <g class="gauge-target" id="heroGaugeTarget"><line x1="142" y1="80" x2="158" y2="80" /></g>
+            </svg>
+            <div class="gauge-center">
+              <span class="gauge-value" id="heroPercent">0.00%</span>
+              <span class="gauge-label">attendance</span>
+            </div>
+          </div>
+
+          <div class="hero-body">
+            <div class="hero-top">
+              <p class="hero-label">Overall Attendance</p>
+              <span class="badge" id="heroBadge">No Data</span>
+            </div>
+            <h2 class="hero-headline" id="heroHeadline">Let's set up your attendance</h2>
+            <p class="hero-message" id="heroMessage">Enter your attendance to get started.</p>
+
+            <div class="hero-chips">
+              <span class="chip"><svg class="icon"><use href="#i-target"/></svg> Target <strong id="heroChipTarget">75%</strong></span>
+              <span class="chip"><svg class="icon"><use href="#i-trend"/></svg> Margin <strong id="heroChipMargin">--</strong></span>
+              <span class="chip"><svg class="icon"><use href="#i-user-check"/></svg> <strong id="heroChipRatio">0/0</strong> attended</span>
+            </div>
+
+            <div class="progress progress-lg" id="heroProgressWrap" data-tip="">
+              <div class="progress-fill" id="heroProgress"></div>
+              <div class="progress-target" id="heroTarget"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning shown only when attendance is below the target -->
+        <div class="alert alert-warning hidden" id="dashWarning">
+          <svg class="icon"><use href="#i-alert"/></svg>
+          <span id="dashWarningText"></span>
+        </div>
+
+        <!-- Six stat cards -->
+        <div class="stats-grid">
+          <div class="card stat">
+            <div class="stat-icon bg-navy"><svg class="icon"><use href="#i-calendar"/></svg></div>
+            <div class="stat-body"><p class="stat-label">Total Classes</p><p class="stat-value" id="statTotal">0</p><p class="stat-sub">conducted so far</p></div>
+          </div>
+          <div class="card stat">
+            <div class="stat-icon bg-emerald"><svg class="icon"><use href="#i-user-check"/></svg></div>
+            <div class="stat-body"><p class="stat-label">Classes Attended</p><p class="stat-value" id="statAttended">0</p><p class="stat-sub" id="statAttendedSub">-</p></div>
+          </div>
+          <div class="card stat">
+            <div class="stat-icon bg-red"><svg class="icon"><use href="#i-user-x"/></svg></div>
+            <div class="stat-body"><p class="stat-label">Classes Absent</p><p class="stat-value" id="statAbsent">0</p><p class="stat-sub" id="statAbsentSub">-</p></div>
+          </div>
+          <div class="card stat">
+            <div class="stat-icon bg-royal"><svg class="icon"><use href="#i-percent"/></svg></div>
+            <div class="stat-body"><p class="stat-label">Attendance</p><p class="stat-value" id="statPercent">0.00%</p><p class="stat-sub" id="statPercentSub">No data yet</p></div>
+          </div>
+          <div class="card stat">
+            <div class="stat-icon bg-amber"><svg class="icon"><use href="#i-coffee"/></svg></div>
+            <div class="stat-body"><p class="stat-label">Safe Bunks Left</p><p class="stat-value" id="statBunks">0</p><p class="stat-sub" id="statBunksSub">-</p></div>
+          </div>
+          <div class="card stat">
+            <div class="stat-icon bg-purple"><svg class="icon"><use href="#i-target"/></svg></div>
+            <div class="stat-body"><p class="stat-label">Required Attendance</p><p class="stat-value" id="statTarget">75%</p><p class="stat-sub">minimum to stay eligible</p></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Doughnut chart -->
+          <div class="card">
+            <h2 class="card-title">Attendance Split</h2>
+            <p class="card-sub">Attended vs missed classes overall.</p>
+            <div class="chart-box chart-doughnut">
+              <canvas id="doughnutChart" aria-label="Attended vs absent chart" role="img"></canvas>
+              <div class="chart-center">
+                <span id="doughnutCenter">0%</span>
+                <small>attended</small>
+              </div>
+            </div>
+            <p class="chart-fallback hidden">Charts need an internet connection (Chart.js is loaded from a CDN).</p>
+          </div>
+
+          <!-- Action plan -->
+          <div class="card">
+            <h2 class="card-title">Your Action Plan</h2>
+            <p class="card-sub">Personalised tips based on your numbers.</p>
+            <div class="plan" id="actionPlan"></div>
+          </div>
+        </div>
+
+        <!-- Subject-wise chart -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Subject-wise Attendance</h2>
+              <p class="card-sub card-sub-tight">Tip: click a bar to open that subject.</p>
+            </div>
+            <button class="btn btn-outline btn-sm" data-goto="subjects">Manage Subjects</button>
+          </div>
+          <div class="chart-box chart-bar" id="subjectChartBox">
+            <canvas id="subjectChart" aria-label="Subject-wise attendance chart" role="img"></canvas>
+          </div>
+          <p class="chart-fallback hidden">Charts need an internet connection (Chart.js is loaded from a CDN).</p>
+          <div class="empty-mini hidden" id="subjectChartEmpty">
+            No subjects yet. Add subjects to see a subject-wise comparison.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== CALCULATOR VIEW ==================== -->
+      <section class="view" id="view-calculator">
+        <div class="grid-2">
+
+          <!-- Input form -->
+          <div class="card">
+            <h2 class="card-title">Overall Attendance</h2>
+            <p class="card-sub">Results update automatically and are saved in your browser.</p>
+
+            <!-- Auto-sync switch -->
+            <label class="switch-row" for="autoSyncToggle">
+              <span>
+                <strong>Calculate from subjects</strong>
+                <small>Overall totals follow your subjects automatically.</small>
+              </span>
+              <input type="checkbox" id="autoSyncToggle" class="switch" />
+            </label>
+
+            <form id="calcForm" novalidate>
+              <div class="field">
+                <label for="inTotal">Total classes conducted</label>
+                <div class="input-group">
+                  <button type="button" class="step-btn" data-step="-1" data-for="inTotal" aria-label="Decrease total classes"><svg class="icon"><use href="#i-minus"/></svg></button>
+                  <input type="number" id="inTotal" min="0" step="1" inputmode="numeric" placeholder="e.g. 120" />
+                  <button type="button" class="step-btn" data-step="1" data-for="inTotal" aria-label="Increase total classes"><svg class="icon"><use href="#i-plus"/></svg></button>
+                </div>
+                <p class="field-error" id="errTotal"></p>
+              </div>
+              <div class="field">
+                <label for="inAttended">Classes attended</label>
+                <div class="input-group">
+                  <button type="button" class="step-btn" data-step="-1" data-for="inAttended" aria-label="Decrease attended classes"><svg class="icon"><use href="#i-minus"/></svg></button>
+                  <input type="number" id="inAttended" min="0" step="1" inputmode="numeric" placeholder="e.g. 95" />
+                  <button type="button" class="step-btn" data-step="1" data-for="inAttended" aria-label="Increase attended classes"><svg class="icon"><use href="#i-plus"/></svg></button>
+                </div>
+                <p class="field-error" id="errAttended"></p>
+              </div>
+              <div class="field">
+                <label for="inTarget">Required attendance (%)</label>
+                <div class="input-group">
+                  <button type="button" class="step-btn" data-step="-1" data-for="inTarget" aria-label="Decrease target"><svg class="icon"><use href="#i-minus"/></svg></button>
+                  <input type="number" id="inTarget" min="1" max="100" step="0.5" inputmode="decimal" placeholder="75" />
+                  <button type="button" class="step-btn" data-step="1" data-for="inTarget" aria-label="Increase target"><svg class="icon"><use href="#i-plus"/></svg></button>
+                </div>
+                <div class="preset-row" aria-label="Common targets">
+                  <button type="button" class="preset" data-target-preset="60">60%</button>
+                  <button type="button" class="preset" data-target-preset="65">65%</button>
+                  <button type="button" class="preset" data-target-preset="75">75%</button>
+                  <button type="button" class="preset" data-target-preset="80">80%</button>
+                  <button type="button" class="preset" data-target-preset="85">85%</button>
+                </div>
+                <p class="field-hint">Applies to overall and subject-wise calculations.</p>
+                <p class="field-error" id="errTarget"></p>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn btn-primary" id="syncBtn" title="Fill totals by adding up all subjects (one time)">
+                  <svg class="icon"><use href="#i-sync"/></svg> Use Subject Totals
+                </button>
+                <button type="button" class="btn btn-outline" id="clearCalcBtn">
+                  <svg class="icon"><use href="#i-x"/></svg> Clear
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Results -->
+          <div class="card result-card">
+            <h2 class="card-title">Results</h2>
+            <div class="result-main">
+              <div class="gauge gauge-md" role="img" id="resGauge" aria-label="Attendance gauge">
+                <svg viewBox="0 0 160 160">
+                  <circle class="gauge-track" cx="80" cy="80" r="68" />
+                  <circle class="gauge-fill" id="resGaugeFill" cx="80" cy="80" r="68" />
+                  <g class="gauge-target" id="resGaugeTarget"><line x1="142" y1="80" x2="158" y2="80" /></g>
+                </svg>
+                <div class="gauge-center">
+                  <span class="gauge-value" id="resPercent">0.00%</span>
+                </div>
+              </div>
+              <div class="result-side">
+                <span class="badge" id="resBadge">No Data</span>
+                <p class="result-ratio" id="resRatio">0 of 0 classes attended</p>
+              </div>
+            </div>
+
+            <div class="progress" id="resProgressWrap" data-tip="">
+              <div class="progress-fill" id="resProgress"></div>
+              <div class="progress-target" id="resTarget"></div>
+            </div>
+
+            <div class="result-grid">
+              <div class="result-item" id="resAbsentBox">
+                <p class="result-label">Absent</p>
+                <p class="result-value" id="resAbsent">0</p>
+              </div>
+              <div class="result-item" id="resBunksBox">
+                <p class="result-label">Safe bunks</p>
+                <p class="result-value" id="resBunks">0</p>
+              </div>
+              <div class="result-item" id="resRecoveryBox">
+                <p class="result-label">Must attend</p>
+                <p class="result-value" id="resRecovery">0</p>
+              </div>
+            </div>
+
+            <!-- Clear verdict banner -->
+            <div class="verdict info" id="resVerdict">
+              <svg class="icon"><use id="resVerdictIcon" href="#i-info"/></svg>
+              <div>
+                <p class="verdict-title" id="resVerdictTitle">Enter your classes</p>
+                <p class="verdict-text" id="resExplain"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Projection chart -->
+        <div class="card">
+          <h2 class="card-title"><svg class="icon"><use href="#i-trend"/></svg> Attendance Projection</h2>
+          <p class="card-sub">How your percentage changes if you attend or bunk every upcoming class. Hover the lines for details.</p>
+          <div class="chart-box chart-line" id="projectionBox">
+            <canvas id="projectionChart" aria-label="Attendance projection chart" role="img"></canvas>
+          </div>
+          <p class="chart-fallback hidden">Charts need an internet connection (Chart.js is loaded from a CDN).</p>
+          <div class="empty-mini hidden" id="projectionEmpty">Enter your classes above to see the projection.</div>
+        </div>
+
+        <!-- What-if planner -->
+        <div class="card">
+          <h2 class="card-title"><svg class="icon"><use href="#i-calendar"/></svg> What-If Planner</h2>
+          <p class="card-sub">See what happens to your attendance after your next few classes.</p>
+          <div class="planner">
+            <div class="field">
+              <label for="inPlanAttend">I will attend next</label>
+              <input type="number" id="inPlanAttend" min="0" step="1" value="0" inputmode="numeric" />
+            </div>
+            <div class="field">
+              <label for="inPlanBunk">I will bunk next</label>
+              <input type="number" id="inPlanBunk" min="0" step="1" value="0" inputmode="numeric" />
+            </div>
+            <div class="planner-result" id="planResult"></div>
+          </div>
+          <p class="field-error" id="errPlan"></p>
+        </div>
+
+        <!-- Formulas used (educational) -->
+        <details class="card formulas">
+          <summary>How are these numbers calculated?</summary>
+          <ul>
+            <li><strong>Attendance %</strong> = (Attended &divide; Total) &times; 100</li>
+            <li><strong>Safe bunks</strong> = floor(Attended &divide; Target &minus; Total), never below 0</li>
+            <li><strong>Classes to attend</strong> = ceil((Target &times; Total &minus; Attended) &divide; (1 &minus; Target))</li>
+            <li>Target is used as a fraction here, so 75% = 0.75.</li>
+          </ul>
+        </details>
+      </section>
+
+      <!-- ==================== SUBJECTS VIEW ==================== -->
+      <section class="view" id="view-subjects">
+
+        <!-- Summary strip -->
+        <div class="summary-grid">
+          <div class="summary-item"><p class="summary-value" id="sumSubjects">0</p><p class="summary-label">Subjects</p></div>
+          <div class="summary-item ok"><p class="summary-value" id="sumSafe">0</p><p class="summary-label">Safe to bunk</p></div>
+          <div class="summary-item warn"><p class="summary-value" id="sumLimit">0</p><p class="summary-label">At the limit</p></div>
+          <div class="summary-item bad"><p class="summary-value" id="sumBelow">0</p><p class="summary-label">Below target</p></div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <svg class="icon"><use href="#i-search"/></svg>
+            <input type="search" id="subjectSearch" placeholder="Search subjects..." aria-label="Search subjects" />
+          </div>
+          <select id="subjectSort" class="select" aria-label="Sort subjects">
+            <option value="added">Order added</option>
+            <option value="name">Name (A-Z)</option>
+            <option value="low">Lowest attendance first</option>
+            <option value="high">Highest attendance first</option>
+          </select>
+          <p class="toolbar-info">
+            Target <strong id="subjectTargetLabel">75%</strong>
+            &middot; <button class="link-btn" data-goto="calculator">change</button>
+          </p>
+          <button class="btn btn-primary" id="addSubjectBtn">
+            <svg class="icon"><use href="#i-plus"/></svg> Add Subject
+          </button>
+        </div>
+
+        <div class="subjects-grid" id="subjectsGrid"></div>
+        <p class="empty-mini hidden" id="subjectsNoMatch">No subjects match your search.</p>
+
+        <div class="card empty-state hidden" id="subjectsEmpty">
+          <div class="empty-icon"><svg class="icon"><use href="#i-book"/></svg></div>
+          <h2>No subjects yet</h2>
+          <p>Add your subjects to track attendance and safe bunks for each one.</p>
+          <div class="btn-row center">
+            <button class="btn btn-primary" data-action="add-subject">
+              <svg class="icon"><use href="#i-plus"/></svg> Add Subject
+            </button>
+            <button class="btn btn-outline" data-action="load-sample">
+              <svg class="icon"><use href="#i-sparkles"/></svg> Load Sample Data
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">Smart Bunk Calculator &middot; Your data stays in this browser (LocalStorage).</footer>
+    </main>
+  </div>
+
+  <!-- Bottom navigation (mobile only) -->
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <button class="bottom-link active" data-view="dashboard"><svg class="icon"><use href="#i-grid"/></svg><span>Dashboard</span></button>
+    <button class="bottom-link" data-view="calculator"><svg class="icon"><use href="#i-calc"/></svg><span>Calculator</span></button>
+    <button class="bottom-link" data-view="subjects"><svg class="icon"><use href="#i-book"/></svg><span>Subjects</span></button>
+  </nav>
+
+  <!-- ============================================================
+       MODAL: Add / Edit Subject
+       ============================================================ -->
+  <div class="modal hidden" id="subjectModal" role="dialog" aria-modal="true" aria-labelledby="subjectModalTitle">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="subjectModalTitle">Add Subject</h2>
+        <button class="icon-btn" data-close-modal aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+      </div>
+      <form id="subjectForm" novalidate>
+        <div class="field">
+          <label for="inSubName">Subject name</label>
+          <input type="text" id="inSubName" maxlength="40" placeholder="e.g. Data Structures" autocomplete="off" />
+          <p class="field-error" id="errSubName"></p>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="inSubTotal">Total classes</label>
+            <input type="number" id="inSubTotal" min="0" step="1" inputmode="numeric" placeholder="0" />
+            <p class="field-error" id="errSubTotal"></p>
+          </div>
+          <div class="field">
+            <label for="inSubAttended">Attended</label>
+            <input type="number" id="inSubAttended" min="0" step="1" inputmode="numeric" placeholder="0" />
+            <p class="field-error" id="errSubAttended"></p>
+          </div>
+        </div>
+        <p class="modal-preview" id="subPreview"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary" id="subjectSaveBtn">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: Confirmation (used for reset, delete, sample data)
+       ============================================================ -->
+  <div class="modal hidden" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-box modal-sm">
+      <div class="confirm-icon"><svg class="icon"><use href="#i-alert"/></svg></div>
+      <h2 id="confirmTitle">Are you sure?</h2>
+      <p id="confirmText"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmOkBtn">Yes, continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications appear here -->
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- Chart.js from CDN, then our app script -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
